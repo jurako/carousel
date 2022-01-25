@@ -1,0 +1,246 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>Carousel</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .carousel {
+            width: 50%;
+            height: 50vh;
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+            transform: translateY(50%)
+        }
+
+        .images {
+            width: 100%;
+            height: 100%;
+        }
+
+        .image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            left: 100%;
+        }
+
+        .hide-left {
+            left: -100%;
+        }
+
+        .active {
+            left: 0%;
+        }
+
+        .image.transition {
+            transition: left 2s;
+        }
+
+        .btn {
+            background-color: rgba(220, 220, 220, 0.3);
+            width: 35px;
+            height: 70px;
+            color: #fff;
+            -webkit-user-select: none;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            cursor: pointer;
+            background-color: rgba(220, 220, 220, 0.4);
+        }
+
+        .previous {
+            left: 0px;
+        }
+
+        .next {
+            right: 0px;
+        }
+
+        .breadcrumbs {
+            display: flex;
+            gap: 10px;
+            width: auto;
+            height: 15px;
+            background-color: blue;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .breadcrumb {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 1.6px solid #fff;
+            transition: background-color 0.3s;
+        }
+
+        .breadcrumb:hover {
+            cursor: pointer;
+            background-color: #fff;
+        }
+
+        .active-bc {
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel">
+        <div class="images">
+            <img class="image active" src="images/image1.jpg" alt="One">
+            <img class="image" src="images/image2.jpg" alt="Two">
+            <img class="image" src="images/image3.jpg" alt="Three">
+            <img class="image" src="images/image4.jpg" alt="Four">
+            <img class="image" src="images/image5.jpg" alt="Five">
+        </div>
+        <div class="breadcrumbs">
+            <div class="breadcrumb active-bc"></div>
+            <div class="breadcrumb"></div>
+            <div class="breadcrumb"></div>
+            <div class="breadcrumb"></div>
+            <div class="breadcrumb"></div>
+        </div>
+        <div class="btn previous">&lt;</div>
+        <div class="btn next">&gt;</div>
+    </div>
+
+    <script>
+
+        class Slider {
+            constructor(){
+                this.timeoutId = 0;
+                this.timeoutInterval = 3000;
+
+                document.querySelector('.previous').addEventListener('click', this.swipe.bind(this));
+                document.querySelector('.next').addEventListener('click', this.swipe.bind(this));
+            }
+
+            swipe(event) {
+                console.log('swipe called');
+                if(document.querySelectorAll('.transition').length > 0) return;
+
+                var direction = 'next';
+                var active = document.querySelector('.active');
+                var images = document.querySelector('.images');
+
+                if(event != undefined) {
+                    direction = event.target.classList.contains('next') ? 'next' : 'previous';
+                }
+
+                if(direction == 'next') {
+
+                    var newActive = active.nextElementSibling;
+                    if(!newActive) {
+                        newActive = images.firstElementChild;
+                    }
+
+                    active.classList.add('hide-left');
+                
+                } else {
+
+                    var newActive = active.previousElementSibling;
+                    if(!newActive) {
+                        newActive = images.lastElementChild;
+                    }
+                    newActive.classList.add('hide-left');
+                    getComputedStyle(newActive).getPropertyValue('left'); //force browser to reflow
+                }
+
+                newActive.classList.add('transition');
+                active.classList.add('transition');
+
+                active.classList.remove('active');
+                newActive.classList.add('active');
+
+                let self = this;
+                images.ontransitionend = function(event) {
+                    event.target.classList.remove('transition', 'hide-left');
+
+                    self.resetTimeout();
+                }
+            }
+
+            resetTimeout() {
+                console.log('this');
+                console.log(this);
+                clearTimeout(this.timeoutId);
+                this.timeoutId = setTimeout(this.swipe.bind(this), this.timeoutInterval);
+            }
+        }
+
+        var slider = new Slider;
+
+        // var timeoutId = 0;
+
+        // function swipe(event) {
+        //     if(document.querySelectorAll('.transition').length > 0) return;
+
+        //     var direction = 'next';
+        //     var active = document.querySelector('.active');
+        //     var images = document.querySelector('.images');
+
+        //     if(event != undefined) {
+        //         direction = event.target.classList.contains('next') ? 'next' : 'previous';
+        //     }
+
+        //     if(direction == 'next') {
+
+        //         var newActive = active.nextElementSibling;
+        //         if(!newActive) {
+        //             newActive = images.firstElementChild;
+        //         }
+
+        //         active.classList.add('hide-left');
+            
+        //     } else {
+
+        //         var newActive = active.previousElementSibling;
+        //         if(!newActive) {
+        //             newActive = images.lastElementChild;
+        //         }
+        //         newActive.classList.add('hide-left');
+        //         getComputedStyle(newActive).getPropertyValue('left'); //force browser to reflow
+        //     }
+
+        //     newActive.classList.add('transition');
+        //     active.classList.add('transition');
+
+        //     active.classList.remove('active');
+        //     newActive.classList.add('active');
+
+        //     images.ontransitionend = function(event) {
+        //         event.target.classList.remove('transition', 'hide-left');
+
+        //         clearTimeout(timeoutId);
+        //         timeoutId = setTimeout(swipe, 3000);
+        //     }
+        // }
+
+        // document.querySelector('.previous').addEventListener('click', swipe);
+        // document.querySelector('.next').addEventListener('click', swipe);
+
+        // window.onload = setTimeout(swipe, 3000);
+    </script>
+</body>
+</html>
