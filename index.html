@@ -12,37 +12,45 @@
         }
 
         .carousel {
-            width: 50%;
-            height: 50vh;
+            width: 100%;
+            height: 100vh;
             position: relative;
             overflow: hidden;
-            margin: 0 auto;
-            transform: translateY(50%)
+            /* margin: 0 auto;
+            transform: translateY(50%) */
         }
 
         .images {
             width: 100%;
             height: 100%;
+            position: relative;
         }
 
         .image {
             width: 100%;
             height: 100%;
-            object-fit: cover;
             position: absolute;
-            left: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transform: translateX(0%);
+            will-change: transform;
         }
 
-        .hide-left {
-            left: -100%;
+        .move-left {
+            transform: translateX(-100%);
+        }
+
+        .move-right {
+            transform: translateX(100%);
         }
 
         .active {
-            left: 0%;
+            opacity: 1;
         }
 
         .image.transition {
-            transition: left 1.5s ease-in-out;
+            opacity: 1;
+            transition: transform 0.6s ease-in-out;
         }
 
         .btn {
@@ -66,7 +74,7 @@
             background-color: rgba(220, 220, 220, 0.4);
         }
 
-        .previous {
+        .prev {
             left: 0px;
         }
 
@@ -99,7 +107,7 @@
             background-color: #fff;
         }
 
-        .active-bc {
+        .breadcrumb.active {
             background-color: #fff;
         }
     </style>
@@ -114,13 +122,13 @@
             <img class="image" src="images/image5.jpg" alt="Five">
         </div>
         <div class="breadcrumbs">
-            <div class="breadcrumb active-bc"></div>
+            <div class="breadcrumb active"></div>
             <div class="breadcrumb"></div>
             <div class="breadcrumb"></div>
             <div class="breadcrumb"></div>
             <div class="breadcrumb"></div>
         </div>
-        <div class="btn previous">&lt;</div>
+        <div class="btn prev">&lt;</div>
         <div class="btn next">&gt;</div>
     </div>
 
