@@ -1,25 +1,31 @@
-const CAROUSEL_SELECTOR    = '.carousel';
-const IMAGES_WRAP_SELECTOR = '.images';
-const NEXT_SElECTOR        = '.next';
-const PREV_SELECTOR        = '.prev';
-const HIDE_RIGHT_SELECTOR  = '.move-right';
-const HIDE_LEFT_SELECTOR   = '.move-left';
-const TRANSITION_SELECTOR  = '.transition';
-const ACTIVE_SELECTOR      = '.active';
-const ACTIVE_BC_SELECTOR   = '.breadcrumb.active';
+const SELECTOR_CAROUSEL     = '.carousel';
+const SELECTOR_IMAGES_WRAP  = '.images';
+const SELECTOR_BC_WRAP      = '.breadcrumbs';
+const SElECTOR_NEXT         = '.next';
+const SELECTOR_PREV         = '.prev';
+const SELECTOR_TRANSITION   = '.transition';
+const SELECTOR_ACTIVE       = '.active';
+const SELECTOR_ACTIVE_BC    = '.breadcrumb.active';
 
-const TIMEOUT_INTERVAL     = 3000;
+const CLASS_NAME_NEXT       = 'next';
+const CLASS_NAME_PREV       = 'prev';
+const CLASS_NAME_MOVE_LEFT  = 'move-left';
+const CLASS_NAME_MOVE_RIGHT = 'move-right';
+const CLASS_NAME_TRANSITION = 'transition';
+const CLASS_NAME_ACTIVE     = 'active';
+
+const TIMEOUT_INTERVAL      = 3000;
 
 class Slider {
     constructor(){
         this.timeoutId = 0;
-        this.timeoutInterval = 3000;
-        this.defaultDirection = 'next';
-        this.images = document.querySelector('.images');
+        this.timeoutInterval = CLASS_NAME_ACTIVE;
+        this.defaultDirection = CLASS_NAME_NEXT;
+        this.images = document.querySelector(SELECTOR_IMAGES_WRAP);
 
-        document.querySelector('.prev').addEventListener('click', this.buttonClick.bind(this));
-        document.querySelector('.next').addEventListener('click', this.buttonClick.bind(this));
-        document.querySelector('.breadcrumbs').addEventListener('click', this.breadcrumbClick.bind(this));
+        document.querySelector(SELECTOR_PREV).addEventListener('click', this.buttonClick.bind(this));
+        document.querySelector(SElECTOR_NEXT).addEventListener('click', this.buttonClick.bind(this));
+        document.querySelector(SELECTOR_BC_WRAP).addEventListener('click', this.breadcrumbClick.bind(this));
     }
 
     autoPlay() {
@@ -33,9 +39,9 @@ class Slider {
     }
 
     buttonClick(event) {
-        this.direction = event.target.classList.contains('next') ? 'next' : 'prev';
+        this.direction = event.target.classList.contains(CLASS_NAME_NEXT) ? CLASS_NAME_NEXT : CLASS_NAME_PREV;
         let newActive = null;
-        if(this.direction == 'next') {
+        if(this.direction == CLASS_NAME_NEXT) {
             newActive = this.active.nextElementSibling;
             if(!newActive) {
                 newActive = this.images.firstElementChild;
@@ -50,52 +56,52 @@ class Slider {
     }
 
     breadcrumbClick(event) {
-        this.activeBreadcrumb = document.querySelector('.breadcrumb.active');
+        this.activeBreadcrumb = document.querySelector(SELECTOR_ACTIVE_BC);
         let activeBreadcrumbIndex = this._getElementIndex(this.activeBreadcrumb.parentNode, this.activeBreadcrumb);
         let breadcrumbIndex = this._getElementIndex(event.target.parentNode, event.target);
 
         if(breadcrumbIndex == activeBreadcrumbIndex) return;
 
-        this.direction = activeBreadcrumbIndex < breadcrumbIndex ? 'next' : 'prev';
+        this.direction = activeBreadcrumbIndex < breadcrumbIndex ? CLASS_NAME_NEXT : CLASS_NAME_PREV;
         let newActive = this.images.children[breadcrumbIndex];
         this.transition(newActive, this.direction);
     }
 
     transition(newActive, direction) {
-        if(document.querySelectorAll('.transition').length > 0) return;
+        if(document.querySelectorAll(SELECTOR_TRANSITION).length > 0) return;
 
-        if(direction == 'next') {
+        if(direction == CLASS_NAME_NEXT) {
 
-            newActive.classList.add('move-right');
+            newActive.classList.add(CLASS_NAME_MOVE_RIGHT);
             this._reflow(newActive);
 
-            this.active.classList.add('transition');
-            newActive.classList.add('transition');
+            this.active.classList.add(CLASS_NAME_TRANSITION);
+            newActive.classList.add(CLASS_NAME_TRANSITION);
 
-            this.active.classList.add('move-left');
-            newActive.classList.remove('move-right');
+            this.active.classList.add(CLASS_NAME_MOVE_LEFT);
+            newActive.classList.remove(CLASS_NAME_MOVE_RIGHT);
         
         } else {
 
-            newActive.classList.add('move-left');
+            newActive.classList.add(CLASS_NAME_MOVE_LEFT);
             this._reflow(newActive);
 
-            this.active.classList.add('transition');
-            newActive.classList.add('transition');
+            this.active.classList.add(CLASS_NAME_TRANSITION);
+            newActive.classList.add(CLASS_NAME_TRANSITION);
 
-            this.active.classList.add('move-right');
-            newActive.classList.remove('move-left');
+            this.active.classList.add(CLASS_NAME_MOVE_RIGHT);
+            newActive.classList.remove(CLASS_NAME_MOVE_LEFT);
 
         }
-        this.active.classList.remove('active');
-        newActive.classList.add('active');
+        this.active.classList.remove(CLASS_NAME_ACTIVE);
+        newActive.classList.add(CLASS_NAME_ACTIVE);
 
-        this.activeBreadcrumb.classList.remove('active');
-        this.activeBreadcrumb.parentNode.children[this._getElementIndex(this.images, newActive)].classList.add('active');
+        this.activeBreadcrumb.classList.remove(CLASS_NAME_ACTIVE);
+        this.activeBreadcrumb.parentNode.children[this._getElementIndex(this.images, newActive)].classList.add(CLASS_NAME_ACTIVE);
 
         let self = this;
         this.images.ontransitionend = function(event) {
-            event.target.classList.remove('transition', 'move-left', 'move-right');
+            event.target.classList.remove(CLASS_NAME_TRANSITION, CLASS_NAME_MOVE_LEFT, CLASS_NAME_MOVE_RIGHT);
 
             self.resetTimeout();
         }
@@ -108,8 +114,8 @@ class Slider {
     init() {
         clearTimeout(this.timeoutId);
         // this.timeoutId = setTimeout(this.autoPlay.bind(this), this.timeoutInterval);
-        this.active = document.querySelector('.active');
-        this.activeBreadcrumb = document.querySelector('.breadcrumb.active');
+        this.active = document.querySelector(SELECTOR_ACTIVE);
+        this.activeBreadcrumb = document.querySelector(SELECTOR_ACTIVE_BC);
     }
 
     _getElementIndex(parentNode, element) {
